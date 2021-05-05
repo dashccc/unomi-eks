@@ -1,0 +1,54 @@
+The basic ARN format is arn:<partition>:iam::<account>:<type>/<id> (for example, arn:aws:iam::111122223333:role/my-administrator).
+
+JDK:
+https://download.oracle.com/otn-pub/java/jdk/16+36/7863447f0ab643c585b9bdebf67c69db/jdk-16_linux-x64_bin.tar.gz
+
+can support either jdk 11 or jdk 8
+tar -xvzf jdk-11.0.10_linux-x64_bin.tar.gz
+
+
+ssh -p 8102 karaf@localhost
+karaf
+
+
+ps aux | grep karaf
+kill -15 <pid>
+
+# elasticsearch username, password
+admin
+\f{E.M9<
+f{E.M9<>
+
+# connect ES from EC2:
+curl -u "admin:\f{E.M9<" "https://vpc-elasticsearch4unomi-s5v4c3ag3dnbm2qwiezvzpd2lq.us-west-1.es.amazonaws.com/_cluster/health?pretty"
+"cluster_name" : "447800564295:elasticsearch4unomi"
+
+curl -u "admin:f{E.M9<>" "https://search-es4unomi2-oul7tq5t6q36wxqcaaw4h3lzpe.us-west-1.es.amazonaws.com/_cluster/health?pretty"
+
+docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="https://vpc-elasticsearch4unomi-s5v4c3ag3dnbm2qwiezvzpd2lq.us-west-1.es.amazonaws.com" apache/unomi:1.5.4
+
+docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="https://search-es4unomi2-oul7tq5t6q36wxqcaaw4h3lzpe.us-west-1.es.amazonaws.com" apache/unomi:1.5.4
+docker run -d --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="https://search-es4unomi2-oul7tq5t6q36wxqcaaw4h3lzpe.us-west-1.es.amazonaws.com" apache/unomi:1.5.4
+
+
+docker exec -it -u 0 unomi /bin/bash
+
+docker cp unomi:/opt/apache-unomi/etc/org.apache.unomi.persistence.elasticsearch.cfg ./
+docker cp org.apache.unomi.persistence.elasticsearch.cfg unomi:/opt/apache-unomi/etc/
+
+docker cp unomi:/opt/apache-unomi/etc/custom.system.properties ./
+docker cp custom.system.properties unomi:/opt/apache-unomi/etc/
+
+
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+docker network create unomi
+docker run --name elasticsearch --net unomi -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e cluster.name=contextElasticSearch docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+docker pull apache/unomi:1.5.0-SNAPSHOT
+docker run --name unomi --net unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES=elasticsearch:9200 apache/unomi:1.5.0-SNAPSHOT
+
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" -e cluster.name=contextElasticSearch docker.elastic.co/elasticsearch/elasticsearch:7.4.2
+
+docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="https://search-es4unomi2-oul7tq5t6q36wxqcaaw4h3lzpe.us-west-1.es.amazonaws.com" unomi:latest
+
+docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="localhost:9200" unomi:latest
+docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 unomi:latest
