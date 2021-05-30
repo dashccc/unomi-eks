@@ -16,14 +16,14 @@ kill -15 <pid>
 
 # elasticsearch username, password
 admin
-\f{E.M9<
 f{E.M9<>
 
 # connect ES from EC2:
-curl -u "admin:\f{E.M9<" "https://vpc-elasticsearch4unomi-s5v4c3ag3dnbm2qwiezvzpd2lq.us-west-1.es.amazonaws.com/_cluster/health?pretty"
-"cluster_name" : "447800564295:elasticsearch4unomi"
+curl -u "admin:f{E.M9<>" "https://search-es4unomi-2-swxtfwr4l5uk4se3rl4n5t3pfu.us-west-1.es.amazonaws.com/_cluster/health?pretty"
+"cluster_name" : "447800564295:es4unomi-2"
 
-curl -u "admin:f{E.M9<>" "https://search-es4unomi2-oul7tq5t6q36wxqcaaw4h3lzpe.us-west-1.es.amazonaws.com/_cluster/health?pretty"
+curl -u "admin:f{E.M9<>" -X GET "https://search-es4unomi-skcu7y6wmid55jtpwalvxjl5qy.us-west-2.es.amazonaws.com/kibana_sample_data_ecommerce/category"
+
 
 docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="https://vpc-elasticsearch4unomi-s5v4c3ag3dnbm2qwiezvzpd2lq.us-west-1.es.amazonaws.com" apache/unomi:1.5.4
 
@@ -52,3 +52,14 @@ docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICS
 
 docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 -e UNOMI_ELASTICSEARCH_ADDRESSES="localhost:9200" unomi:latest
 docker run --name unomi -p 8181:8181 -p 9443:9443 -p 8102:8102 unomi:latest
+
+docker tag unomi:latest 447800564295.dkr.ecr.us-west-1.amazonaws.com/unomi:v3
+docker push 447800564295.dkr.ecr.us-west-1.amazonaws.com/unomi:v3
+aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 447800564295.dkr.ecr.us-west-1.amazonaws.com
+
+
+services:
+unomi-cluster-service    a7c712bc64ae14ed7a6bd422f02f3714-1065848269.us-west-2.elb.amazonaws.com
+unomi-cluster-service-karaf   ac3e981f687474cdd9aa379641bdba47-316067641.us-west-2.elb.amazonaws.com
+
+ssh -p 80 karaf@ac3e981f687474cdd9aa379641bdba47-316067641.us-west-2.elb.amazonaws.com

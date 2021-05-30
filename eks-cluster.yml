@@ -1,0 +1,34 @@
+--- 
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: "unomi-cluster"
+  region: "us-west-2"
+  version: "1.15"
+vpc:
+  cidr: 10.10.0.0/16
+  autoAllocateIPv6: true
+  # disable public access to endpoint and only allow private access
+  clusterEndpoints:
+    publicAccess: true
+    privateAccess: true
+nodeGroups:
+  - name: recode-8vcpu-16gb-spot-cpu
+    minSize: 1
+    maxSize: 10
+    instancesDistribution:
+      instanceTypes: ["c5.2xlarge"] 
+      onDemandBaseCapacity: 0
+      onDemandPercentageAboveBaseCapacity: 0 
+      spotInstancePools: 4 
+    labels:
+      lifecycle: Ec2Spot  
+      intent: apps 
+      process: cpu
+    taints:
+      spotInstance: "true:PreferNoSchedule" 
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        cloudWatch: true
+        albIngress: true
